@@ -242,10 +242,24 @@ target_include_directories(sheenbidi-static PRIVATE
 list(APPEND STATIC_LIBRARIES physfs-static tinyxml2-static lodepng-static c-hashmap-static faudio-static sheenbidi-static)
 
 add_library(tinyxml2-static STATIC ${XML2_SRC})
+
 add_library(physfs-static STATIC ${PFS_SRC})
 target_compile_definitions(physfs-static PRIVATE
     -DPHYSFS_SUPPORTS_DEFAULT=0 -DPHYSFS_SUPPORTS_ZIP=1
 )
+if (PSP)
+    target_compile_definitions(physfs-static PRIVATE
+        -D__unix__
+        -DPHYSFS_NO_CDROM_SUPPORT=1
+        -DPHYSFS_PLATFORM_UNIX=1
+        -DPHYSFS_PLATFORM_POSIX=1
+        -DPHYSFS_ARCHIVE_SLB=Off
+        -DPHYSFS_BUILD_SHARED=Off
+        -DPHYSFS_BUILD_DOCS=Off
+        -DPHYSFS_ARCHIVE_ISO9660=Off
+    )
+endif()
+
 add_library(faudio-static STATIC ${FAUDIO_SRC})
 target_include_directories(
     faudio-static PRIVATE
@@ -296,46 +310,28 @@ foreach(static_library IN LISTS STATIC_LIBRARIES)
     target_compile_options(${static_library} PRIVATE ${GLOBAL_COMPILE_FLAGS})
 endforeach(static_library)
 
-# SDL2 Dependency (Detection pulled from FAudio)
-if(DEFINED SDL2_INCLUDE_DIRS AND DEFINED SDL2_LIBRARIES)
-    message(STATUS "Using pre-defined SDL2 variables SDL2_INCLUDE_DIRS and SDL2_LIBRARIES")
-    target_include_directories(VVVVVV SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
-    target_link_libraries(VVVVVV ${SDL2_LIBRARIES})
-    if(BUNDLE_DEPENDENCIES)
-        target_include_directories(faudio-static SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
-        target_link_libraries(faudio-static ${SDL2_LIBRARIES})
-    endif()
-elseif(DEFINED SDL2_FRAMEWORK)
-    message(STATUS "Using pre-defined SDL2 variable SDL2_FRAMEWORK")
-    target_include_directories(VVVVVV SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_FRAMEWORK}/Headers>")
-    target_link_libraries(VVVVVV ${SDL2_FRAMEWORK})
-    if(BUNDLE_DEPENDENCIES)
-        target_include_directories(faudio-static SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_FRAMEWORK}/Headers>")
-        target_link_libraries(faudio-static ${SDL2_FRAMEWORK})
-    endif()
-    set_target_properties(VVVVVV PROPERTIES XCODE_EMBED_FRAMEWORKS ${SDL2_FRAMEWORK})
-else()
-    # Only try to autodetect if both SDL2 variables aren't explicitly set
-    find_package(SDL2 CONFIG)
-    if(TARGET SDL2::SDL2)
-        message(STATUS "Using TARGET SDL2::SDL2")
-        target_link_libraries(VVVVVV SDL2::SDL2)
-        if(BUNDLE_DEPENDENCIES)
-            target_link_libraries(faudio-static SDL2::SDL2)
-        endif()
-    elseif(TARGET SDL2)
-        message(STATUS "Using TARGET SDL2")
-        target_link_libraries(VVVVVV SDL2)
-        if(BUNDLE_DEPENDENCIES)
-            target_link_libraries(faudio-static SDL2)
-        endif()
-    else()
-        message(STATUS "No TARGET SDL2::SDL2, or SDL2, using variables")
-        target_include_directories(VVVVVV SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
-        target_link_libraries(VVVVVV ${SDL2_LIBRARIES})
-        if(BUNDLE_DEPENDENCIES)
-            target_include_directories(faudio-static SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
-            target_link_libraries(faudio-static ${SDL2_LIBRARIES})
-        endif()
-    endif()
+# SDL2 Dependency
+include(FindPkgConfig)
+pkg_search_module(SDL2 REQUIRED sdl2)
+target_include_directories(VVVVVV SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
+target_link_libraries(VVVVVV ${SDL2_LIBRARIES})
+target_include_directories(faudio-static SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
+target_link_libraries(faudio-static ${SDL2_LIBRARIES})
+
+# PSP
+if(PSP)
+    target_link_libraries(VVVVVV
+        pspdebug
+        pspdisplay
+        pspge
+    )
+
+    create_pbp_file(
+        TARGET ${PROJECT_NAME}
+        ICON_PATH NULL
+        BACKGROUND_PATH NULL
+        PREVIEW_PATH NULL
+        TITLE ${PROJECT_NAME}
+        VERSION 01.00
+    )
 endif()
