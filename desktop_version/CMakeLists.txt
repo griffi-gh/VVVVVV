@@ -113,7 +113,6 @@ target_include_directories(
     ../third_party/FAudio/src
     ../third_party/SheenBidi/Headers
 )
-
 if(MAKEANDPLAY)
     target_compile_definitions(VVVVVV PRIVATE -DMAKEANDPLAY)
 endif()
@@ -313,13 +312,18 @@ endforeach(static_library)
 # SDL2 Dependency
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
-target_include_directories(VVVVVV SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
+target_include_directories(VVVVVV SYSTEM PRIVATE ${SDL2_INCLUDE_DIRS})
 target_link_libraries(VVVVVV ${SDL2_LIBRARIES})
-target_include_directories(faudio-static SYSTEM PRIVATE "$<BUILD_INTERFACE:${SDL2_INCLUDE_DIRS}>")
+target_include_directories(faudio-static SYSTEM PRIVATE ${SDL2_INCLUDE_DIRS})
 target_link_libraries(faudio-static ${SDL2_LIBRARIES})
 
 # PSP
 if(PSP)
+    if (NOT DEFINED PSPDEV)
+        message(FATAL_ERROR "PSPDEV not defined. Make sure psp-config in your path or pass custom \
+                            toolchain location via PSPDEV variable in cmake call.")
+    endif ()
+
     target_link_libraries(VVVVVV
         pspdebug
         pspdisplay
