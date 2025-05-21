@@ -3,7 +3,8 @@
 	url = https://github.com/lvandeve/lodepng
 [submodule "third_party/physfs"]
 	path = third_party/physfs
-	url = https://github.com/icculus/physfs/
+	url = https://github.com/griffi-gh/physfs/
+	branch = psp-pref-dir-hack
 [submodule "third_party/tinyxml2"]
 	path = third_party/tinyxml2
 	url = https://github.com/leethomason/tinyxml2/
