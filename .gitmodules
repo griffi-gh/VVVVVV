@@ -9,7 +9,8 @@
 	url = https://github.com/leethomason/tinyxml2/
 [submodule "third_party/FAudio"]
 	path = third_party/FAudio
-	url = https://github.com/FNA-XNA/FAudio
+	url = https://github.com/griffi-gh/FAudio
+	branch = psp-sdl2-fix
 [submodule "third_party/c-hashmap"]
 	path = third_party/c-hashmap
 	url = https://github.com/Mashpoe/c-hashmap
