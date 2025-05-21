@@ -327,11 +327,11 @@ if(PSP)
     )
 
     create_pbp_file(
-        TARGET ${PROJECT_NAME}
+        TARGET VVVVVV
         ICON_PATH NULL
         BACKGROUND_PATH NULL
         PREVIEW_PATH NULL
-        TITLE ${PROJECT_NAME}
+        TITLE VVVVVV
         VERSION 01.00
     )
 endif()
