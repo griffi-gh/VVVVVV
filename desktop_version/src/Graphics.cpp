@@ -3754,7 +3754,7 @@ bool Graphics::reloadresources(void)
     MAYBE_FAIL(checktexturesize("entcolours.png", grphx.im_entcolours, 8, 8));
     MAYBE_FAIL(checktexturesize("sprites.png", grphx.im_sprites, 32, 32));
     MAYBE_FAIL(checktexturesize("flipsprites.png", grphx.im_flipsprites, 32, 32));
-    MAYBE_FAIL(checktexturesize("teleporter.png", grphx.im_teleporter, 96, 96));
+    MAYBE_FAIL(checktexturesize("teleporter.png", grphx.im_teleporter, 48, 48));
 
     destroy();
 

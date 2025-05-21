@@ -744,6 +744,8 @@ void musicclass::init(void)
 
     SoundTrack::Init(44100);
 
+    return; // TODO fix audio
+
     soundTracks.push_back(SoundTrack( "sounds/jump.wav" ));
     soundTracks.push_back(SoundTrack( "sounds/jump2.wav" ));
     soundTracks.push_back(SoundTrack( "sounds/hurt.wav" ));
