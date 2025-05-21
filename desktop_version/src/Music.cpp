@@ -781,8 +781,6 @@ void musicclass::init(void)
 
     SoundTrack::Init(44100);
 
-    return; // TODO fix audio
-
     soundTracks.push_back(SoundTrack( "sounds/jump.wav" ));
     soundTracks.push_back(SoundTrack( "sounds/jump2.wav" ));
     soundTracks.push_back(SoundTrack( "sounds/hurt.wav" ));
@@ -824,6 +822,10 @@ void musicclass::init(void)
 
     num_mmmmmm_tracks = 0;
     num_pppppp_tracks = 0;
+
+#ifdef PSP
+    return; // TODO fix music crashing
+#endif
 
     if (!mmmmmm_blob.unPackBinary("mmmmmm.vvv"))
     {
