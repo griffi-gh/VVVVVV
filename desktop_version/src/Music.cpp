@@ -823,7 +823,7 @@ void musicclass::init(void)
     num_mmmmmm_tracks = 0;
     num_pppppp_tracks = 0;
 
-#ifdef PSP
+#ifdef __PSP__
     return; // TODO fix music crashing
 #endif
 

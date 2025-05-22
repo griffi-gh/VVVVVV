@@ -3,7 +3,7 @@
 #include <emscripten.h>
 #include <emscripten/html5.h>
 #endif
-#ifdef PSP
+#ifdef __PSP__
 #include <pspkernel.h>
 #include <pspdebug.h>
 #include <pspctrl.h>
@@ -46,7 +46,7 @@
 #include "UtilityClass.h"
 #include "Vlogging.h"
 
-// #ifdef PSP
+// #ifdef __PSP__
 // PSP_MODULE_INFO("VVVVVV", 0, 1, 0);
 // PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
 // #endif
@@ -397,7 +397,7 @@ static void keep_console_open(const bool open_console)
 
 int main(int argc, char *argv[])
 {
-#if defined(PSP)
+#if defined(__PSP__)
     // Set max available clock speed on psp
     scePowerSetClockFrequency(333, 333, 166);
 #endif
