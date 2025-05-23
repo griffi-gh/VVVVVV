@@ -1,8 +1,12 @@
 #define MUSIC_DEFINITION
 #include "Music.h"
 
-#include <SDL.h>
+#ifdef __PSP__
+#include "MusicPSPME.h"
+#else
 #include <FAudio.h>
+#endif
+#include <SDL.h>
 #include <physfsrwops.h>
 
 #include "Alloc.h"
@@ -18,6 +22,7 @@
 
 #include <vector>
 
+#ifndef __PSP__
 /* stb_vorbis */
 
 #define malloc SDL_malloc
@@ -78,9 +83,17 @@
 #include <stb_vorbis.h>
 
 /* End stb_vorbis include */
+#endif
 
 #define VVV_MAX_VOLUME 128
 #define VVV_MAX_CHANNELS 8
+
+#ifdef __PSP__
+
+static std::vector<SoundTrack> soundTracks;
+static std::vector<MusicTrack> musicTracks;
+
+#else // __PSP__
 
 class SoundTrack;
 class MusicTrack;
@@ -747,6 +760,8 @@ bool MusicTrack::paused = false;
 FAudioSourceVoice* MusicTrack::musicVoice = NULL;
 MusicTrack* MusicTrack::currentTrack = NULL;
 
+#endif // __PSP__
+
 musicclass::musicclass(void)
 {
     safeToProcessMusic= false;
@@ -768,6 +783,7 @@ musicclass::musicclass(void)
 
 void musicclass::init(void)
 {
+#ifndef __PSP__
     if (FAudioCreate(&faudioctx, 0, FAUDIO_DEFAULT_PROCESSOR))
     {
         vlog_error("Unable to initialize FAudio");
@@ -778,9 +794,9 @@ void musicclass::init(void)
         vlog_error("Unable to create mastering voice");
         return;
     }
+#endif
 
     SoundTrack::Init(44100);
-
     soundTracks.push_back(SoundTrack( "sounds/jump.wav" ));
     soundTracks.push_back(SoundTrack( "sounds/jump2.wav" ));
     soundTracks.push_back(SoundTrack( "sounds/hurt.wav" ));
@@ -810,6 +826,10 @@ void musicclass::init(void)
     soundTracks.push_back(SoundTrack( "sounds/trophy.wav" ));
     soundTracks.push_back(SoundTrack( "sounds/rescue.wav" ));
 
+#ifdef __PSP__
+    // TODO load audio tracks
+#else
+
 #ifdef VVV_COMPILEMUSIC
     binaryBlob musicWriteBlob;
 #define FOREACH_TRACK(blob, track_name) blob.AddFileToBinaryBlob("data/" track_name);
@@ -822,10 +842,6 @@ void musicclass::init(void)
 
     num_mmmmmm_tracks = 0;
     num_pppppp_tracks = 0;
-
-#ifdef __PSP__
-    return; // TODO fix music crashing
-#endif
 
     if (!mmmmmm_blob.unPackBinary("mmmmmm.vvv"))
     {
@@ -927,6 +943,7 @@ void musicclass::init(void)
         num_pppppp_tracks++;
         index_++;
     }
+#endif
 }
 
 void musicclass::destroy(void)
@@ -946,8 +963,10 @@ void musicclass::destroy(void)
 
     pppppp_blob.clear();
     mmmmmm_blob.clear();
+#ifndef __PSP__
     VVV_freefunc(FAudioVoice_DestroyVoice, masteringvoice);
     VVV_freefunc(FAudio_Release, faudioctx);
+#endif
 }
 
 void musicclass::set_music_volume(int volume)

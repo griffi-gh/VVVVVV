@@ -64,6 +64,7 @@ set(VVV_CXX_SRC
     src/Logic.cpp
     src/Map.cpp
     src/Music.cpp
+    src/MusicPSPME.cpp
     src/Otherlevel.cpp
     src/preloader.cpp
     src/Render.cpp
@@ -328,6 +329,8 @@ if(PSP)
         pspdebug
         pspdisplay
         pspge
+        pspaudio
+        pspaudiocodec
     )
 
     create_pbp_file(
